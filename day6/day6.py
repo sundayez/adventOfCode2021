@@ -32,9 +32,9 @@ def part_two(numbers):
 
 def main():
     lines = read_file("input.txt")
-    numbers = list(map(int, lines[0].split(",")))
     numbers = [(x, y) for (x, y) in
-               [(number, len([x for x in numbers if x == number])) for number in range(6)] if y != 0]
+               [(number, len([x for x in list(map(int, lines[0].split(","))) if x == number])) for number in range(6)]
+               if y != 0]
     part_one(numbers)
     part_two(numbers)
 
