@@ -5,48 +5,54 @@ def read_file(filename):
     return lines
 
 
-def part_one(polymer, rules):
-    for i in range(10):
-        print(i)
-        new_polymer = polymer[0]
-        for j in range(len(polymer) - 1):
-            sub = ''.join([polymer[j], polymer[j + 1]])
-            if rules[sub]:
-                new_polymer += rules[sub]
-                new_polymer += sub[1]
-            else:
-                new_polymer += sub[1]
-        polymer = new_polymer
-    print(len(polymer))
-    freqs = {}
-    for c in polymer:
-        if c in freqs:
-            freqs[c] += 1
+def build_polymer_dict(polymer):
+    polymer_dict = {}
+    for i in range(len(polymer) - 1):
+        sub = ''.join([polymer[i], polymer[i + 1]])
+        if sub in polymer_dict:
+            polymer_dict[sub] += 1
         else:
-            freqs[c] = 1
-    print(max(freqs.values()) - min(freqs.values()))
+            polymer_dict[sub] = 1
+    return polymer_dict
+
+
+def calculate_frequencies(polymer_dict, rules, iterations):
+    for i in range(iterations):
+        new_dict = {}
+        for key in polymer_dict.keys():
+            sub1 = key[0] + rules[key]
+            sub2 = rules[key] + key[1]
+            if sub1 in new_dict:
+                new_dict[sub1] += polymer_dict[key]
+            else:
+                new_dict[sub1] = polymer_dict[key]
+            if sub2 in new_dict:
+                new_dict[sub2] += polymer_dict[key]
+            else:
+                new_dict[sub2] = polymer_dict[key]
+        polymer_dict = new_dict
+    frequencies = {}
+    for polymer in polymer_dict:
+        if polymer[1] in frequencies:
+            frequencies[polymer[1]] += polymer_dict[polymer]
+        else:
+            frequencies[polymer[1]] = polymer_dict[polymer]
+    frequencies[polymer[0]] += 1
+    return frequencies
+
+
+def calculate_problem(polymer, rules, iterations):
+    polymer_dict = build_polymer_dict(polymer)
+    frequencies = calculate_frequencies(polymer_dict, rules, iterations)
+    print(max(frequencies.values()) - min(frequencies.values()))
+
+
+def part_one(polymer, rules):
+    calculate_problem(polymer, rules, 10)
 
 
 def part_two(polymer, rules):
-    for i in range(40):
-        print(i)
-        new_polymer = polymer[0]
-        for j in range(len(polymer) - 1):
-            sub = ''.join([polymer[j], polymer[j + 1]])
-            if rules[sub]:
-                new_polymer += rules[sub]
-                new_polymer += sub[1]
-            else:
-                new_polymer += sub[1]
-        polymer = new_polymer
-    print(len(polymer))
-    freqs = {}
-    for c in polymer:
-        if c in freqs:
-            freqs[c] += 1
-        else:
-            freqs[c] = 1
-    print(max(freqs.values()) - min(freqs.values()))
+    calculate_problem(polymer, rules, 40)
 
 
 def parse_lines(lines):
@@ -59,7 +65,7 @@ def main():
     lines = read_file("input.txt")
     polymer, rules = parse_lines(lines)
     part_one(polymer, rules)
-    # part_two(polymer, rules)
+    part_two(polymer, rules)
 
 
 main()
