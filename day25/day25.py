@@ -69,10 +69,6 @@ def part_one(cucumbers):
     print(i)
 
 
-def part_two(cucumbers):
-    return 1
-
-
 def parse_input(lines):
     east_dictionary = {}
     south_dictionary = {}
@@ -89,7 +85,6 @@ def main():
     lines = read_file("input.txt")
     cucumbers = parse_input(lines)
     part_one(cucumbers)
-    part_two(cucumbers)
 
 
 main()
